@@ -351,7 +351,7 @@ function Hero() {
                         >
                             {/* Image */}
                             <motion.img
-                                src="/images/rs-profile.png"
+                                src="/images/rs-profile.webp"
                                 alt="Rushikesh Sultane - Frontend Developer"
                                 fetchPriority="high"
                                 decoding="async"
