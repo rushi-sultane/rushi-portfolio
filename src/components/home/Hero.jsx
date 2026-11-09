@@ -24,20 +24,35 @@ function Hero() {
     const { theme } = useTheme()
     const isDark = theme === 'dark'
     const shouldReduceMotion = useReducedMotion()
+    const [isMobile, setIsMobile] = useState(false)
 
-    // Role animation
     useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 767px)')
+        const updateDevice = () => setIsMobile(mediaQuery.matches)
+
+        updateDevice()
+        mediaQuery.addEventListener('change', updateDevice)
+
+        return () => mediaQuery.removeEventListener('change', updateDevice)
+    }, [])
+
+    const disableDecorativeMotion = shouldReduceMotion || isMobile
+
+    // Keep the role text static on mobile to avoid unnecessary repeated renders.
+    useEffect(() => {
+        if (disableDecorativeMotion) return
+
         const interval = setInterval(() => {
             setRoleIndex((prev) => (prev + 1) % roles.length)
-        }, 2500)
+        }, 3000)
 
         return () => clearInterval(interval)
-    }, [])
+    }, [disableDecorativeMotion])
 
     // Profile image 3D interaction
     const handleImageMove = (e) => {
         if (
-            shouldReduceMotion ||
+            disableDecorativeMotion ||
             window.matchMedia('(pointer: coarse)').matches
         ) return
 
@@ -293,7 +308,7 @@ function Hero() {
                     {/* Decorative Ring */}
                     <motion.div
                         className="absolute h-[85%] w-[85%] rounded-full border border-violet-400/10"
-                        animate={shouldReduceMotion ? {} : {
+                        animate={disableDecorativeMotion ? {} : {
                             rotate: 360,
                         }}
                         transition={{
@@ -306,7 +321,7 @@ function Hero() {
                     {/* Small Accent Orb */}
                     <motion.div
                         className="absolute right-[12%] top-[15%] h-3 w-3 rounded-full bg-orange-400 shadow-[0_0_25px_rgba(251,146,60,0.8)]"
-                        animate={shouldReduceMotion ? {} : {
+                        animate={disableDecorativeMotion ? {} : {
                             y: [0, -12, 0],
                             scale: [1, 1.3, 1],
                         }}
@@ -319,7 +334,7 @@ function Hero() {
 
                     {/* Profile Image Floating Wrapper */}
                     <motion.div
-                        animate={shouldReduceMotion ? {} : {
+                        animate={disableDecorativeMotion ? {} : {
                             y: [0, -10, 0],
                         }}
                         transition={{
@@ -350,9 +365,11 @@ function Hero() {
                                 }`}
                         >
                             {/* Image */}
-                            <motion.img
+                            <img
                                 src="/images/rs-profile.webp"
                                 alt="Rushikesh Sultane - Frontend Developer"
+                                width="600"
+                                height="750"
                                 fetchPriority="high"
                                 decoding="async"
                                 className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.045]"
@@ -389,8 +406,8 @@ function Hero() {
 
                     {/* Specialization Glass Card */}
                     <motion.div
-                        animate={shouldReduceMotion ? {} : { y: [0, -9, 0] }}
-                        whileHover={shouldReduceMotion ? {} : { scale: 1.045, y: -4 }}
+                        animate={disableDecorativeMotion ? {} : { y: [0, -9, 0] }}
+                        whileHover={disableDecorativeMotion ? {} : { scale: 1.045, y: -4 }}
                         transition={{
                             y: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
                             scale: { duration: 0.25 },
@@ -421,8 +438,8 @@ function Hero() {
 
                     {/* Creative Mindset Glass Card */}
                     <motion.div
-                        animate={shouldReduceMotion ? {} : { y: [0, 9, 0] }}
-                        whileHover={shouldReduceMotion ? {} : { scale: 1.045, y: 4 }}
+                        animate={disableDecorativeMotion ? {} : { y: [0, 9, 0] }}
+                        whileHover={disableDecorativeMotion ? {} : { scale: 1.045, y: 4 }}
                         transition={{
                             y: { duration: 5, repeat: Infinity, ease: 'easeInOut' },
                             scale: { duration: 0.25 },
