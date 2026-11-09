@@ -1,43 +1,62 @@
+
 /* Fonts are imported in main.jsx before this stylesheet. */
 @import "tailwindcss";
 
-/* THEME TOKENS */
+/* =========================================
+   THEME TOKENS
+========================================= */
+
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
+
   --page-bg: #100d18;
   --section-bg: #171322;
   --card-bg: #1d1728;
+
   --primary-text: #ffffff;
   --secondary-text: #b7aec5;
+
   --border-color: #342944;
+
   --accent-violet: #a78bfa;
   --accent-orange: #fb923c;
+
   --selection-bg: #a78bfa;
   --selection-text: #100d18;
 }
 
 [data-theme="light"] {
   color-scheme: light;
+
   --page-bg: #fff8f2;
   --section-bg: #fffaf6;
   --card-bg: #ffffff;
+
   --primary-text: #292033;
   --secondary-text: #62566b;
+
   --border-color: #f0dfd2;
+
   --accent-violet: #7c3aed;
   --accent-orange: #ea580c;
+
   --selection-bg: #7c3aed;
   --selection-text: #ffffff;
 }
 
-/* GLOBAL */
+/* =========================================
+   GLOBAL STYLES
+========================================= */
+
 :root {
   font-family: 'DM Sans', sans-serif;
   color: var(--primary-text);
   background: var(--page-bg);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -62,9 +81,13 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: clip;
+
   background: var(--page-bg);
   color: var(--primary-text);
-  transition: background-color 0.3s ease, color 0.3s ease;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 #root {
@@ -102,19 +125,24 @@ canvas {
   outline-offset: 3px;
 }
 
-/* SHARED TYPOGRAPHY & EFFECTS */
+/* =========================================
+   SHARED TYPOGRAPHY & EFFECTS
+========================================= */
+
 .font-display {
   font-family: 'Space Grotesk', sans-serif;
 }
 
 .gradient-text {
   color: transparent;
+
   background: linear-gradient(
     110deg,
     var(--primary-text) 10%,
     var(--accent-violet) 55%,
     var(--accent-orange) 100%
   );
+
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -122,6 +150,10 @@ canvas {
 .glow {
   box-shadow: 0 0 60px rgba(139, 92, 246, 0.15);
 }
+
+/* =========================================
+   SHARED LAYOUT
+========================================= */
 
 .section-container {
   width: min(100% - 64px, 1280px);
@@ -134,12 +166,33 @@ canvas {
   scroll-margin-top: 76px;
 }
 
-/* HERO */
+.section-container,
+.hero-content,
+.hero-visual {
+  min-width: 0;
+}
+
+/* =========================================
+   ABOUT SECTION
+========================================= */
+
+.about-section {
+  min-height: 100svh;
+  scroll-margin-top: 76px;
+}
+
+/* =========================================
+   HERO SECTION
+========================================= */
+
 .hero-section {
   min-height: 100svh;
+  min-height: 100dvh;
+
   height: auto;
-  padding-top: 100px;
-  padding-bottom: 48px;
+
+  padding-top: 60px;
+  padding-bottom: 20px;
 }
 
 .hero-content {
@@ -154,95 +207,36 @@ canvas {
   max-width: 390px;
 }
 
-/* PROJECTS */
+/* =========================================
+   PROJECTS
+========================================= */
+
 .project-card {
   min-width: 0;
 }
 
-/* FOOTER */
+/* =========================================
+   FOOTER
+========================================= */
+
 footer {
   position: relative;
   z-index: 10;
+
   display: block;
   width: 100%;
 }
 
-/* RESPONSIVE */
-@media (min-width: 1600px) {
-  .hero-title {
-    font-size: clamp(5rem, 5.5vw, 6.5rem);
-  }
+/* =========================================
+   INFINITE TECH SKILLS MARQUEE
+========================================= */
 
-  .hero-visual {
-    max-width: 430px;
-  }
-}
-
-@media (max-width: 1023px) {
-  .section-container {
-    width: min(100% - 48px, 1280px);
-  }
-
-  .hero-section {
-    padding-top: 120px;
-    padding-bottom: 55px;
-  }
-
-  .hero-title {
-    font-size: clamp(3.2rem, 7vw, 5rem);
-  }
-
-  .hero-visual {
-    max-width: 340px;
-  }
-}
-
-@media (max-width: 767px) {
-  .section-container {
-    width: calc(100% - 40px);
-  }
-
-  .hero-section {
-    min-height: 100svh;
-    padding-top: 112px;
-    padding-bottom: 48px;
-  }
-
-  .hero-title {
-    font-size: clamp(2.8rem, 11vw, 4.5rem);
-  }
-
-  .hero-visual {
-    max-width: 290px;
-    margin-top: 20px;
-  }
-
-  .marquee-item {
-    padding: 10px 16px;
-    font-size: 12px;
-  }
-
-  .marquee-track {
-    animation-duration: 28s;
-  }
-}
-
-@media (max-width: 380px) {
-  .section-container {
-    width: calc(100% - 32px);
-  }
-
-  .hero-title {
-    font-size: 2.65rem;
-  }
-}
-
-/* INFINITE TECH SKILLS MARQUEE */
 .tech-marquee {
   position: relative;
   width: 100%;
   overflow: hidden;
   padding: 12px 0;
+
   mask-image: linear-gradient(
     to right,
     transparent,
@@ -250,6 +244,7 @@ footer {
     black 92%,
     transparent
   );
+
   -webkit-mask-image: linear-gradient(
     to right,
     transparent,
@@ -262,6 +257,7 @@ footer {
 .marquee-track {
   display: flex;
   width: max-content;
+
   animation: tech-marquee-scroll 35s linear infinite;
 }
 
@@ -269,6 +265,7 @@ footer {
   display: flex;
   flex-shrink: 0;
   align-items: center;
+
   gap: 16px;
   padding-right: 16px;
 }
@@ -277,13 +274,19 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+
   white-space: nowrap;
+
   border: 1px solid var(--border-color);
   border-radius: 999px;
+
   padding: 12px 20px;
+
   color: var(--secondary-text);
   background: var(--card-bg);
+
   font-size: 13px;
+
   transition:
     color 0.3s ease,
     border-color 0.3s ease,
@@ -292,17 +295,34 @@ footer {
 
 .marquee-item:hover {
   color: var(--accent-violet);
-  border-color: color-mix(in srgb, var(--accent-violet) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-violet) 8%, var(--card-bg));
+
+  border-color: color-mix(
+    in srgb,
+    var(--accent-violet) 50%,
+    transparent
+  );
+
+  background: color-mix(
+    in srgb,
+    var(--accent-violet) 8%,
+    var(--card-bg)
+  );
 }
 
 .marquee-dot {
   width: 6px;
   height: 6px;
+
   flex-shrink: 0;
   border-radius: 50%;
+
   background: var(--accent-violet);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-violet) 60%, transparent);
+
+  box-shadow: 0 0 10px color-mix(
+    in srgb,
+    var(--accent-violet) 60%,
+    transparent
+  );
 }
 
 @keyframes tech-marquee-scroll {
@@ -315,18 +335,33 @@ footer {
   }
 }
 
-.tech-marquee:hover .marquee-track {
+/* Pause only on devices with hover support */
+@media (hover: hover) and (pointer: fine) {
+  .tech-marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Pause when an interactive marquee item receives focus */
+.tech-marquee:focus-within .marquee-track {
   animation-play-state: paused;
 }
 
-/* THEME TOGGLE */
+/* =========================================
+   THEME TOGGLE
+========================================= */
+
 .theme-toggle {
   padding: 9px 15px;
+
   border: 1px solid var(--border-color);
   border-radius: 30px;
+
   background: var(--card-bg);
   color: var(--primary-text);
+
   font-size: 13px;
+
   transition:
     color 0.3s ease,
     border-color 0.3s ease,
@@ -338,7 +373,98 @@ footer {
   color: var(--accent-violet);
 }
 
-/* ACCESSIBILITY: REDUCED MOTION */
+/* =========================================
+   LARGE DESKTOP
+========================================= */
+
+@media (min-width: 1600px) {
+  .hero-title {
+    font-size: clamp(5rem, 5.5vw, 6.5rem);
+  }
+
+  .hero-visual {
+    max-width: 430px;
+  }
+}
+
+/* =========================================
+   TABLET & SMALL LAPTOP
+========================================= */
+
+@media (max-width: 1023px) {
+  .section-container {
+    width: min(100% - 48px, 1280px);
+  }
+
+  .hero-section {
+    padding-top: 60px;
+    padding-bottom: 55px;
+  }
+
+  .hero-title {
+    font-size: clamp(3.2rem, 7vw, 5rem);
+  }
+
+  .hero-visual {
+    max-width: 340px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 767px) {
+  .section-container {
+    width: calc(100% - 40px);
+  }
+
+  .hero-section {
+    min-height: 100svh;
+    min-height: 100dvh;
+
+    padding-top: 60px;
+    padding-bottom: 48px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.8rem, 11vw, 4.5rem);
+  }
+
+  .hero-visual {
+    max-width: 290px;
+    margin-top: 20px;
+  }
+
+  /* Mobile marquee adjustments */
+  .marquee-item {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+
+  .marquee-track {
+    animation-duration: 28s;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 380px) {
+  .section-container {
+    width: calc(100% - 32px);
+  }
+
+  .hero-title {
+    font-size: 2.65rem;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY: REDUCED MOTION
+========================================= */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

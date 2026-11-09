@@ -136,17 +136,6 @@ function AboutPreview() {
                     </m.p>
 
                     <m.div variants={reveal} className="mt-8 flex flex-wrap items-center gap-4">
-                        <button
-                            type="button"
-                            onClick={scrollToContact}
-                            className="group inline-flex items-center gap-3 rounded-full bg-violet-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-600/20 transition-all duration-300 hover:-translate-y-1 hover:bg-violet-500 hover:shadow-[0_12px_35px_rgba(139,92,246,0.3)]"
-                        >
-                            Let's Connect
-                            <ArrowUpRight
-                                size={17}
-                                className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
-                            />
-                        </button>
 
                         <span className={`text-xs ${isDark ? 'text-white/35' : 'text-[#8a7d8f]'}`}>
                             React · Python · Django

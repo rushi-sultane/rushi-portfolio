@@ -6,16 +6,16 @@ import {
     useSpring,
     useTransform,
 } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, MessageCircle, Mail } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
 import HeroBackground from './HeroBackground'
 
 const roles = [
     'Frontend Developer',
-    'React Developer',
+    'React.js Developer',
     'Python Developer',
-    'Full Stack Developer',
+    'Python Full Stack Developer',
 ]
 
 function Hero() {
@@ -129,9 +129,8 @@ function Hero() {
     return (
         <section
             id="home"
-            className={`hero-section relative isolate flex w-full items-center overflow-hidden px-6 transition-colors duration-500 md:px-14 ${
-                isDark ? 'bg-[#100d18]' : 'bg-[#fff8f2]'
-            }`}
+            className={`hero-section relative isolate flex w-full items-center overflow-hidden px-6 transition-colors duration-500 md:px-14 ${isDark ? 'bg-[#100d18]' : 'bg-[#fff8f2]'
+                }`}
         >
             {/* Interactive 3D Background */}
             <HeroBackground />
@@ -164,7 +163,7 @@ function Hero() {
                         </span>
 
                         <span className={`text-xs tracking-wide ${secondaryText}`}>
-                            Available for opportunities
+                            Open to Developer Opportunities
                         </span>
                     </m.div>
 
@@ -194,9 +193,8 @@ function Hero() {
                                 },
                             },
                         }}
-                        className={`hero-title font-display font-bold leading-[0.92] tracking-tighter ${
-                            isDark ? 'text-white' : 'text-[#292033]'
-                        }`}
+                        className={`hero-title font-display font-bold leading-[0.92] tracking-tighter ${isDark ? 'text-white' : 'text-[#292033]'
+                            }`}
                     >
                         Building
                         <br />
@@ -238,9 +236,10 @@ function Hero() {
                         variants={reveal}
                         className={`mt-4 max-w-xl text-sm leading-7 sm:text-base ${secondaryText}`}
                     >
-                        I transform ideas into beautiful, interactive and
-                        high-performance digital experiences using modern
-                        frontend technologies and Python.
+                        I build responsive web applications and engaging user
+                        experiences using React.js, Python, Django and modern
+                        frontend technologies, with a focus on clean code,
+                        performance and usability.
                     </m.p>
 
                     {/* Action Buttons */}
@@ -261,17 +260,57 @@ function Hero() {
                             />
                         </Link>
 
-                        <Link
-                            to="/#contact"
-                            onClick={(event) => scrollToSection(event, '#contact')}
-                            className={`rounded-full border px-6 py-3.5 text-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-400 hover:text-orange-500 ${
-                                isDark
-                                    ? 'border-white/15 text-white/80'
-                                    : 'border-[#e7d8ce] text-[#62566b]'
-                            }`}
+                        <a
+                            href="/resume.pdf"
+                            download="Rushikesh-Sultane-Resume.pdf"
+                            className={`inline-flex items-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-orange-400 hover:text-orange-500 ${isDark
+                                ? 'border-orange-400/30 text-white/80'
+                                : 'border-[#e7d8ce] text-[#62566b]'
+                                }`}
                         >
-                            Let's Connect
-                        </Link>
+                            Download Resume
+                            <ArrowUpRight size={17} />
+                        </a>
+
+
+                        <div className="flex flex-wrap items-center gap-3">
+
+                            {/* WhatsApp */}
+                            <a
+                                href="https://wa.me/918459252336?text=Hello%2C%20I%20visited%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20career%20opportunity."
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`group inline-flex items-center gap-2 rounded-full border px-5 py-3.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-green-500 hover:text-green-500 ${isDark
+                                        ? 'border-white/15 text-white/80'
+                                        : 'border-[#e7d8ce] text-[#62566b]'
+                                    }`}
+                            >
+                                <MessageCircle size={17} />
+                                WhatsApp
+                                <ArrowUpRight
+                                    size={15}
+                                    className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
+                                />
+                            </a>
+
+                            {/* Email */}
+                            <a
+                                href="mailto:sultanerushi@gmail.com?subject=Career%20Opportunity&body=Hello%20Rushikesh%2C%0A%0AI%20visited%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20career%20opportunity."
+                                className={`group inline-flex items-center gap-2 rounded-full border px-5 py-3.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-orange-400 hover:text-orange-500 ${isDark
+                                        ? 'border-white/15 text-white/80'
+                                        : 'border-[#e7d8ce] text-[#62566b]'
+                                    }`}
+                            >
+                                <Mail size={17} />
+                                Email Me
+                                <ArrowUpRight
+                                    size={15}
+                                    className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
+                                />
+                            </a>
+
+                        </div>
+
                     </m.div>
 
                     {/* Social Links */}
@@ -370,11 +409,10 @@ function Hero() {
                                 transformPerspective: 1000,
                                 transformStyle: 'preserve-3d',
                             }}
-                            className={`group relative aspect-[4/5] w-full overflow-hidden rounded-[32px] border shadow-[0_20px_80px_rgba(139,92,246,0.18)] ${
-                                isDark
-                                    ? 'border-violet-400/25 bg-[#15111f]'
-                                    : 'border-violet-300/60 bg-white'
-                            }`}
+                            className={`group relative aspect-[4/5] w-full overflow-hidden rounded-[32px] border shadow-[0_20px_80px_rgba(139,92,246,0.18)] ${isDark
+                                ? 'border-violet-400/25 bg-[#15111f]'
+                                : 'border-violet-300/60 bg-white'
+                                }`}
                         >
                             {/* Image */}
                             <img
@@ -389,11 +427,10 @@ function Hero() {
 
                             {/* Image Gradient Overlay */}
                             <div
-                                className={`absolute inset-0 ${
-                                    isDark
-                                        ? 'bg-gradient-to-t from-[#100d18]/85 via-transparent to-transparent'
-                                        : 'bg-gradient-to-t from-black/65 via-transparent to-transparent'
-                                }`}
+                                className={`absolute inset-0 ${isDark
+                                    ? 'bg-gradient-to-t from-[#100d18]/85 via-transparent to-transparent'
+                                    : 'bg-gradient-to-t from-black/65 via-transparent to-transparent'
+                                    }`}
                             />
 
                             {/* Inner Border Highlight */}
@@ -431,7 +468,7 @@ function Hero() {
                             rotateX: specializationRotateX,
                             transformPerspective: 800,
                         }}
-                        className={`absolute -right-2 top-[18%] z-20 min-w-[158px] rounded-2xl border p-4 shadow-2xl backdrop-blur-2xl sm:-right-8 ${cardSurface}`}
+                        className={`absolute -right-14 -bottom-15 z-20 min-w-[158px] rounded-2xl border p-4 shadow-2xl backdrop-blur-2xl sm:-right-8 ${cardSurface}`}
                     >
                         <div className="flex items-center gap-2">
                             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500/15 text-xs font-bold text-violet-500">
@@ -463,7 +500,7 @@ function Hero() {
                             rotateX: creativeRotateX,
                             transformPerspective: 800,
                         }}
-                        className={`absolute -bottom-4 -left-2 z-20 rounded-2xl border p-4 shadow-2xl backdrop-blur-2xl sm:-left-8 ${cardSurface}`}
+                        className={`absolute -top-15 -left-14 z-20 rounded-2xl border p-4 shadow-2xl backdrop-blur-2xl sm:-left-8 ${cardSurface}`}
                     >
                         <div className="flex items-center gap-2">
                             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-400/15 text-orange-500">
