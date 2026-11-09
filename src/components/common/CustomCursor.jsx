@@ -1,53 +1,59 @@
-
-import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 function CustomCursor() {
-    const [position, setPosition] = useState({ x: -100, y: -100 })
     const [hovering, setHovering] = useState(false)
     const [visible, setVisible] = useState(false)
+    const hoveringRef = useRef(false)
+    const x = useMotionValue(-100)
+    const y = useMotionValue(-100)
+
+    const springX = useSpring(x, { stiffness: 650, damping: 40, mass: 0.2 })
+    const springY = useSpring(y, { stiffness: 650, damping: 40, mass: 0.2 })
 
     useEffect(() => {
-        if (window.matchMedia('(pointer: coarse)').matches) return
+        const pointerQuery = window.matchMedia('(pointer: coarse)')
+        if (pointerQuery.matches) return
 
-        const move = (e) => {
-            setPosition({ x: e.clientX, y: e.clientY })
-            setVisible(true)
+        const move = (event) => {
+            x.set(event.clientX)
+            y.set(event.clientY)
 
-            const target = e.target.closest(
-                'a, button, [data-cursor], input, textarea'
-            )
+            if (!visible) setVisible(true)
 
-            setHovering(Boolean(target))
+            const target = event.target instanceof Element
+                ? event.target.closest('a, button, [data-cursor], input, textarea')
+                : null
+            const nextHovering = Boolean(target)
+
+            // Avoid React state updates on every mouse movement.
+            if (nextHovering !== hoveringRef.current) {
+                hoveringRef.current = nextHovering
+                setHovering(nextHovering)
+            }
         }
 
         const leave = () => {
             setVisible(false)
+            hoveringRef.current = false
             setHovering(false)
         }
 
-        window.addEventListener('mousemove', move)
-        document.addEventListener('mouseleave', leave)
+        window.addEventListener('pointermove', move, { passive: true })
+        document.addEventListener('pointerleave', leave)
 
         return () => {
-            window.removeEventListener('mousemove', move)
-            document.removeEventListener('mouseleave', leave)
+            window.removeEventListener('pointermove', move)
+            document.removeEventListener('pointerleave', leave)
         }
-    }, [])
+    }, [x, y, visible])
 
     return (
         <motion.div
+            aria-hidden="true"
             className="pointer-events-none fixed left-0 top-0 z-[999] hidden md:block"
-            animate={{
-                x: position.x,
-                y: position.y,
-                opacity: visible ? 1 : 0,
-            }}
-            transition={{
-                x: { type: 'spring', stiffness: 650, damping: 40 },
-                y: { type: 'spring', stiffness: 650, damping: 40 },
-                opacity: { duration: 0.2 },
-            }}
+            style={{ x: springX, y: springY, opacity: visible ? 1 : 0 }}
+            transition={{ opacity: { duration: 0.2 } }}
         >
             {/* Outer Ring */}
             <motion.div
@@ -58,10 +64,7 @@ function CustomCursor() {
                     borderColor: hovering ? '#a78bfa' : '#fb923c',
                     backgroundColor: 'transparent',
                 }}
-                transition={{
-                    duration: 0.2,
-                    ease: 'easeOut',
-                }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
             />
 
             {/* Center Dot */}

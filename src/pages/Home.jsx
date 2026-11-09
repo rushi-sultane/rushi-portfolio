@@ -5,6 +5,7 @@ import Preloader from '../components/common/Preloader'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import Hero from '../components/home/Hero'
+import CustomCursor from '../components/common/CustomCursor'
 
 const AboutPreview = lazy(() => import('../components/home/AboutPreview'))
 const TechStack = lazy(() => import('../components/home/TechStack'))
@@ -72,6 +73,7 @@ function Home() {
             </main>
 
             <Footer />
+            <CustomCursor/>
         </>
     )
 }
