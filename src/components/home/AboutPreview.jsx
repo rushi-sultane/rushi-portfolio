@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import {
     ArrowUpRight,
     BriefcaseBusiness,
@@ -81,7 +81,7 @@ function AboutPreview() {
 
             <div className="section-container relative z-10 grid w-full items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
                 {/* LEFT: INTRODUCTION */}
-                <motion.div
+                <m.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
@@ -93,14 +93,14 @@ function AboutPreview() {
                     }}
                     className="max-w-2xl"
                 >
-                    <motion.div variants={reveal} className="mb-6 flex items-center gap-3">
+                    <m.div variants={reveal} className="mb-6 flex items-center gap-3">
                         <span className="h-px w-8 bg-gradient-to-r from-violet-500 to-orange-400" />
                         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-violet-500 sm:text-sm">
                             02 / About Me
                         </p>
-                    </motion.div>
+                    </m.div>
 
-                    <motion.h2
+                    <m.h2
                         variants={reveal}
                         className={`max-w-2xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl ${
                             isDark ? 'text-white' : 'text-[#292033]'
@@ -109,9 +109,9 @@ function AboutPreview() {
                         Turning ideas into
                         <span className="gradient-text"> meaningful</span>{' '}
                         digital experiences.
-                    </motion.h2>
+                    </m.h2>
 
-                    <motion.p
+                    <m.p
                         variants={reveal}
                         className={`mt-7 max-w-xl text-sm leading-8 md:text-base ${
                             isDark ? 'text-white/65' : 'text-[#62566b]'
@@ -122,9 +122,9 @@ function AboutPreview() {
                         creating responsive, user-friendly web applications
                         with React and modern frontend technologies. I also
                         work with Python and Django to build backend solutions.
-                    </motion.p>
+                    </m.p>
 
-                    <motion.p
+                    <m.p
                         variants={reveal}
                         className={`mt-4 max-w-xl text-sm leading-8 md:text-base ${
                             isDark ? 'text-white/45' : 'text-[#756a7c]'
@@ -133,9 +133,9 @@ function AboutPreview() {
                         My focus is on writing clean code, exploring new
                         technologies, and building digital products that make
                         everyday interactions feel simple and intuitive.
-                    </motion.p>
+                    </m.p>
 
-                    <motion.div variants={reveal} className="mt-8 flex flex-wrap items-center gap-4">
+                    <m.div variants={reveal} className="mt-8 flex flex-wrap items-center gap-4">
                         <button
                             type="button"
                             onClick={scrollToContact}
@@ -151,10 +151,10 @@ function AboutPreview() {
                         <span className={`text-xs ${isDark ? 'text-white/35' : 'text-[#8a7d8f]'}`}>
                             React · Python · Django
                         </span>
-                    </motion.div>
+                    </m.div>
 
                     {/* Technology tags */}
-                    <motion.div variants={reveal} className="mt-10">
+                    <m.div variants={reveal} className="mt-10">
                         <p className={`mb-3 text-[10px] font-semibold uppercase tracking-[0.22em] ${
                             isDark ? 'text-white/35' : 'text-[#8a7d8f]'
                         }`}>
@@ -174,11 +174,11 @@ function AboutPreview() {
                                 </span>
                             ))}
                         </div>
-                    </motion.div>
-                </motion.div>
+                    </m.div>
+                </m.div>
 
                 {/* RIGHT: HIGHLIGHT CARDS */}
-                <motion.div
+                <m.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
@@ -195,7 +195,7 @@ function AboutPreview() {
                         const isOrange = item.accent === 'orange'
 
                         return (
-                            <motion.article
+                            <m.article
                                 key={item.label}
                                 variants={reveal}
                                 whileHover={shouldReduceMotion ? {} : { y: -7, scale: 1.015 }}
@@ -250,10 +250,10 @@ function AboutPreview() {
                                 <div className={`relative mt-5 h-px w-9 rounded-full transition-all duration-500 group-hover:w-16 ${
                                     isOrange ? 'bg-orange-400' : 'bg-violet-500'
                                 }`} />
-                            </motion.article>
+                            </m.article>
                         )
                     })}
-                </motion.div>
+                </m.div>
             </div>
         </section>
     )

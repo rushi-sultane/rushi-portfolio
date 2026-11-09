@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import {
     ArrowUpRight,
     Check,
@@ -65,7 +65,7 @@ function ContactCTA() {
             </div>
 
             <div className="section-container relative z-10 w-full text-center">
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.25 }}
@@ -97,7 +97,7 @@ function ContactCTA() {
                     </p>
 
                     {/* PRIMARY EMAIL ACTION */}
-                    <motion.a
+                    <m.a
                         whileHover={shouldReduceMotion ? {} : { y: -4, scale: 1.02 }}
                         whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
                         href={`mailto:${email}`}
@@ -109,7 +109,7 @@ function ContactCTA() {
                             size={17}
                             className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
                         />
-                    </motion.a>
+                    </m.a>
 
                     {/* EMAIL + COPY ACTION */}
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -166,7 +166,7 @@ function ContactCTA() {
                             )
                         })}
                     </div>
-                </motion.div>
+                </m.div>
             </div>
         </section>
     )

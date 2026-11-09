@@ -1,6 +1,7 @@
+
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { useTheme } from '../../context/ThemeContext'
 
 const navLinks = [
@@ -18,32 +19,67 @@ function Navbar() {
     const [activeSection, setActiveSection] = useState('home')
 
     const { theme, toggleTheme } = useTheme()
+    const isDark = theme === 'dark'
 
+    // Optimized scroll and active-section detection
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 24)
+        let frameId = null
+        let previousScrolled = null
+        let previousSection = null
 
-            const sectionIds = navLinks.map((link) => link.href.slice(1))
-            const current = sectionIds
-                .map((id) => document.getElementById(id))
-                .filter(Boolean)
-                .filter((section) => section.getBoundingClientRect().top <= 150)
-                .at(-1)
+        const updateNavbar = () => {
+            frameId = null
 
-            if (current) setActiveSection(current.id)
-            else setActiveSection('home')
+            // Update the navbar background only when the state changes
+            const scrolled = window.scrollY > 24
+
+            if (scrolled !== previousScrolled) {
+                previousScrolled = scrolled
+                setIsScrolled(scrolled)
+            }
+
+            // Query sections dynamically because DeferredSection renders them lazily
+            let currentSection = 'home'
+
+            navLinks.forEach((link) => {
+                const id = link.href.slice(1)
+                const section = document.getElementById(id)
+
+                if (
+                    section &&
+                    section.getBoundingClientRect().top <= 150
+                ) {
+                    currentSection = id
+                }
+            })
+
+            // Avoid unnecessary React renders while scrolling
+            if (currentSection !== previousSection) {
+                previousSection = currentSection
+                setActiveSection(currentSection)
+            }
         }
 
-        handleScroll()
+        const handleScroll = () => {
+            if (frameId === null) {
+                frameId = requestAnimationFrame(updateNavbar)
+            }
+        }
+
+        updateNavbar()
+
         window.addEventListener('scroll', handleScroll, { passive: true })
         window.addEventListener('resize', handleScroll)
 
         return () => {
             window.removeEventListener('scroll', handleScroll)
             window.removeEventListener('resize', handleScroll)
+
+            if (frameId !== null) {
+                cancelAnimationFrame(frameId)
+            }
         }
     }, [])
-    const isDark = theme === 'dark'
 
     const handleNavigation = (href) => {
         setMenuOpen(false)
@@ -116,7 +152,7 @@ function Navbar() {
                         >
                             {link.name}
 
-                            <motion.span
+                            <m.span
                                 className="absolute -bottom-0.5 left-0 h-[2px] rounded-full bg-gradient-to-r from-violet-500 to-orange-400"
                                 initial={false}
                                 animate={{
@@ -163,7 +199,7 @@ function Navbar() {
 
                         <AnimatePresence>
                             {resumeOpen && (
-                                <motion.div
+                                <m.div
                                     initial={{ opacity: 0, y: 8, scale: 0.96 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 8, scale: 0.96 }}
@@ -188,7 +224,7 @@ function Navbar() {
                                     >
                                         Download Resume ↓
                                     </a>
-                                </motion.div>
+                                </m.div>
                             )}
                         </AnimatePresence>
                     </div>
@@ -211,7 +247,7 @@ function Navbar() {
             {/* MOBILE MENU */}
             <AnimatePresence>
                 {menuOpen && (
-                    <motion.div
+                    <m.div
                         id="mobile-navigation"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
@@ -227,7 +263,7 @@ function Navbar() {
 
                             {/* MOBILE NAVIGATION LINKS */}
                             {navLinks.map((link, index) => (
-                                <motion.button
+                                <m.button
                                     key={link.name}
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
@@ -244,7 +280,7 @@ function Navbar() {
                                     }`}
                                 >
                                     {link.name}
-                                </motion.button>
+                                </m.button>
                             ))}
 
                             {/* MOBILE RESUME OPTIONS */}
@@ -269,7 +305,7 @@ function Navbar() {
                                 </a>
                             </div>
                         </div>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
         </header>
@@ -277,3 +313,4 @@ function Navbar() {
 }
 
 export default Navbar
+

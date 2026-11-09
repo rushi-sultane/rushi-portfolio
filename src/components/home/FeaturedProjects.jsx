@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import {
     ArrowUpRight,
     ExternalLink,
@@ -74,7 +74,7 @@ function FeaturedProjects() {
 
             <div className="section-container relative z-10 w-full">
                 {/* SECTION HEADING */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 25 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.2 }}
@@ -111,7 +111,7 @@ function FeaturedProjects() {
                         <Layers3 size={14} className="text-violet-500" />
                         03 Featured Projects
                     </div>
-                </motion.div>
+                </m.div>
 
                 {/* PROJECT CARDS */}
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -120,7 +120,7 @@ function FeaturedProjects() {
                         const isOrange = project.accent === 'orange'
 
                         return (
-                            <motion.article
+                            <m.article
                                 key={project.number}
                                 initial={{ opacity: 0, y: 32 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -152,7 +152,7 @@ function FeaturedProjects() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-white/[0.04]" />
 
                                     {/* Floating preview panel */}
-                                    <motion.div
+                                    <m.div
                                         animate={shouldReduceMotion ? {} : { y: [0, -7, 0] }}
                                         transition={{
                                             duration: 5 + index,
@@ -168,7 +168,7 @@ function FeaturedProjects() {
                                             <span className={`h-1.5 w-1.5 rounded-full ${isOrange ? 'bg-orange-300' : 'bg-violet-300'}`} />
                                             Project preview
                                         </span>
-                                    </motion.div>
+                                    </m.div>
 
                                     <span className="absolute left-5 top-5 rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] text-white/85 backdrop-blur-md">
                                         {project.number}
@@ -247,7 +247,7 @@ function FeaturedProjects() {
                                         </div>
                                     )}
                                 </div>
-                            </motion.article>
+                            </m.article>
                         )
                     })}
                 </div>

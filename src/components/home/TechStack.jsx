@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import {
     Braces,
     Code2,
@@ -81,7 +81,7 @@ function TechStack() {
 
             <div className="section-container relative z-10">
                 {/* SECTION HEADING */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 25 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.25 }}
@@ -109,7 +109,7 @@ function TechStack() {
                         experiences, backend applications and reliable
                         development workflows.
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* INFINITE TECH MARQUEE */}
                 <div
@@ -146,7 +146,7 @@ function TechStack() {
                 </div>
 
                 {/* SKILL GROUP CARDS */}
-                <motion.div
+                <m.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.15 }}
@@ -163,7 +163,7 @@ function TechStack() {
                         const isOrange = group.accent === 'orange'
 
                         return (
-                            <motion.article
+                            <m.article
                                 key={group.number}
                                 variants={{
                                     hidden: { opacity: 0, y: 28 },
@@ -241,10 +241,10 @@ function TechStack() {
                                         </span>
                                     ))}
                                 </div>
-                            </motion.article>
+                            </m.article>
                         )
                     })}
-                </motion.div>
+                </m.div>
             </div>
         </section>
     )

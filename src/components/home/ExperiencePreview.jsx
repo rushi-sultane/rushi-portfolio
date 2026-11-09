@@ -1,5 +1,5 @@
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -34,7 +34,7 @@ function ExperiencePreview() {
             <div className="experience-container relative mx-auto w-full max-w-7xl">
 
                 {/* Section heading */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 25 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -50,7 +50,7 @@ function ExperiencePreview() {
                         <br />
                         <span className="gradient-text">education.</span>
                     </h2>
-                </motion.div>
+                </m.div>
 
                 {/* Experience timeline */}
                 <div className="experience-list relative mt-9 grid grid-cols-2 gap-5">
@@ -59,7 +59,7 @@ function ExperiencePreview() {
                     <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-violet-400/70 via-violet-500/20 to-transparent" />
 
                     {experiences.map((item, index) => (
-                        <motion.article
+                        <m.article
                             key={item.role}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -105,7 +105,7 @@ function ExperiencePreview() {
                                     </span>
                                 ))}
                             </div>
-                        </motion.article>
+                        </m.article>
                     ))}
                 </div>
 

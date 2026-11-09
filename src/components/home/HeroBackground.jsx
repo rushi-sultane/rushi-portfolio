@@ -1,28 +1,51 @@
-
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import {
-    motion,
+    m,
+    useMotionValue,
     useReducedMotion,
+    useSpring,
+    useTransform,
 } from 'framer-motion'
 import { useTheme } from '../../context/ThemeContext'
 
 function HeroBackground() {
     const canvasRef = useRef(null)
-    const [mouse, setMouse] = useState({ x: 0, y: 0 })
-
     const { theme } = useTheme()
     const isDark = theme === 'dark'
     const shouldReduceMotion = useReducedMotion()
+
+    // Motion values move the decorative layers without React re-renders.
+    const mouseX = useMotionValue(0)
+    const mouseY = useMotionValue(0)
+
+    const smoothMouseX = useSpring(mouseX, {
+        stiffness: 45,
+        damping: 18,
+        mass: 0.8,
+    })
+
+    const smoothMouseY = useSpring(mouseY, {
+        stiffness: 45,
+        damping: 18,
+        mass: 0.8,
+    })
+
+    const violetX = useTransform(smoothMouseX, (value) => value * -65)
+    const violetY = useTransform(smoothMouseY, (value) => value * -65)
+    const orangeX = useTransform(smoothMouseX, (value) => value * 85)
+    const orangeY = useTransform(smoothMouseY, (value) => value * 85)
+    const gridX = useTransform(smoothMouseX, (value) => value * -18)
+    const gridY = useTransform(smoothMouseY, (value) => value * -18)
 
     // PARTICLE NETWORK
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        const ctx = canvas.getContext('2d')
+        const ctx = canvas.getContext('2d', { alpha: true })
         if (!ctx) return
 
-        let animationId
+        let animationId = 0
         let particles = []
         let width = 0
         let height = 0
@@ -34,72 +57,68 @@ function HeroBackground() {
             active: false,
         }
 
-        const isTouch = window.matchMedia(
-            '(pointer: coarse)'
-        ).matches
+        const isTouch = window.matchMedia('(pointer: coarse)').matches
+        const reducedMotion = Boolean(shouldReduceMotion)
 
-        const reducedMotion = window.matchMedia(
-            '(prefers-reduced-motion: reduce)'
-        ).matches
+        const violet = isDark ? '167,139,250' : '124,58,237'
+        const orange = isDark ? '251,146,60' : '234,88,12'
 
-        const colors = {
-            violet: isDark
-                ? '167,139,250'
-                : '124,58,237',
-            orange: isDark
-                ? '251,146,60'
-                : '234,88,12',
-        }
+        const connectionDistance = 135
+        const connectionDistanceSquared =
+            connectionDistance * connectionDistance
+        const interactionRadius = 180
+        const interactionRadiusSquared =
+            interactionRadius * interactionRadius
+        const cursorDistance = 165
+        const cursorDistanceSquared = cursorDistance * cursorDistance
 
-        // CREATE PARTICLES
         const resize = () => {
             const rect = canvas.getBoundingClientRect()
-
             width = rect.width
             height = rect.height
 
-            const dpr = Math.min(
-                window.devicePixelRatio || 1,
-                2
-            )
+            // A slightly lower mobile DPR reduces canvas fill and compositing cost.
+            const maxDpr = isTouch ? 1.5 : 2
+            const dpr = Math.min(window.devicePixelRatio || 1, maxDpr)
 
             canvas.width = Math.round(width * dpr)
             canvas.height = Math.round(height * dpr)
-
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
             const area = width * height
-
             const count = Math.min(
                 Math.max(Math.floor(area / 10000), 30),
                 100
             )
 
-            particles = Array.from({ length: count }, (_, i) => ({
-                x: Math.random() * width,
-                y: Math.random() * height,
+            particles = Array.from({ length: count }, (_, index) => {
+                const color = index % 4 === 0 ? orange : violet
 
-                vx: (Math.random() - 0.5) * 0.45,
-                vy: (Math.random() - 0.5) * 0.45,
-
-                radius: Math.random() * 1.7 + 0.7,
-
-                phase: Math.random() * Math.PI * 2,
-                pulseSpeed: Math.random() * 0.025 + 0.008,
-
-                color: i % 4 === 0
-                    ? colors.orange
-                    : colors.violet,
-            }))
+                return {
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8,
+                    radius: Math.random() * 1.7 + 0.7,
+                    phase: Math.random() * Math.PI * 2,
+                    pulseSpeed: Math.random() * 0.025 + 0.008,
+                    fillColor: `rgba(${color},0.9)`,
+                    softColor: `rgba(${color},0.09)`,
+                }
+            })
         }
 
-        // CURSOR POSITION
-        const handleMouseMove = (e) => {
-            const rect = canvas.getBoundingClientRect()
+        const handleMouseMove = (event) => {
+            if (isTouch || reducedMotion) return
 
-            pointer.x = e.clientX - rect.left
-            pointer.y = e.clientY - rect.top
-            pointer.active = true
+            const rect = canvas.getBoundingClientRect()
+            pointer.x = event.clientX - rect.left
+            pointer.y = event.clientY - rect.top
+            pointer.active =
+                pointer.x >= 0 &&
+                pointer.x <= width &&
+                pointer.y >= 0 &&
+                pointer.y <= height
         }
 
         const handleMouseLeave = () => {
@@ -108,7 +127,6 @@ function HeroBackground() {
             pointer.y = -1000
         }
 
-        // DRAW PARTICLES
         const draw = () => {
             if (!isVisible) return
 
@@ -131,60 +149,56 @@ function HeroBackground() {
                         ? 'rgba(167,139,250,0.10)'
                         : 'rgba(124,58,237,0.07)'
                 )
-
                 glow.addColorStop(1, 'transparent')
 
                 ctx.fillStyle = glow
                 ctx.fillRect(0, 0, width, height)
             }
 
-            // UPDATE PARTICLES
-            particles.forEach((particle) => {
+            // Update and draw particles
+            for (let i = 0; i < particles.length; i += 1) {
+                const particle = particles[i]
+
                 if (!reducedMotion) {
                     particle.phase += particle.pulseSpeed
-
                     particle.x += particle.vx
                     particle.y += particle.vy
 
-                    // Cursor interaction
+                    // Cursor interaction: avoid square roots until inside the radius.
                     if (pointer.active && !isTouch) {
                         const dx = particle.x - pointer.x
                         const dy = particle.y - pointer.y
+                        const distanceSquared = dx * dx + dy * dy
 
-                        const distance = Math.hypot(dx, dy)
+                        if (
+                            distanceSquared < interactionRadiusSquared &&
+                            distanceSquared > 0
+                        ) {
+                            const distance = Math.sqrt(distanceSquared)
+                            const force =
+                                (interactionRadius - distance) / interactionRadius
+                            const inverseDistance = 1 / distance
 
-                        if (distance < 180 && distance > 0) {
-                            const force = (180 - distance) / 180
-
-                            // Gentle repulsion
-                            particle.vx +=
-                                (dx / distance) * force * 0.035
-
-                            particle.vy +=
-                                (dy / distance) * force * 0.035
-
-                            // Circular movement
-                            particle.vx +=
-                                (-dy / distance) * force * 0.012
-
-                            particle.vy +=
-                                (dx / distance) * force * 0.012
+                            particle.vx += dx * inverseDistance * force * 0.035
+                            particle.vy += dy * inverseDistance * force * 0.035
+                            particle.vx += -dy * inverseDistance * force * 0.012
+                            particle.vy += dx * inverseDistance * force * 0.012
                         }
                     }
 
                     // Natural damping
-                    particle.vx *= 0.992
-                    particle.vy *= 0.992
+                    particle.vx *= 0.995
+                    particle.vy *= 0.995
 
                     // Maximum speed
-                    const speed = Math.hypot(
-                        particle.vx,
-                        particle.vy
-                    )
+                    const speedSquared =
+                        particle.vx * particle.vx +
+                        particle.vy * particle.vy
 
-                    if (speed > 0.7) {
-                        particle.vx *= 0.7 / speed
-                        particle.vy *= 0.7 / speed
+                    if (speedSquared > 1.44) {
+                        const scale = 1.2 / Math.sqrt(speedSquared)
+                        particle.vx *= scale
+                        particle.vy *= scale
                     }
 
                     // Boundary collision
@@ -196,122 +210,106 @@ function HeroBackground() {
                         particle.vy *= -1
                     }
 
-                    particle.x = Math.max(
-                        0,
-                        Math.min(width, particle.x)
-                    )
-
-                    particle.y = Math.max(
-                        0,
-                        Math.min(height, particle.y)
-                    )
+                    particle.x = Math.max(0, Math.min(width, particle.x))
+                    particle.y = Math.max(0, Math.min(height, particle.y))
                 }
 
-                // Pulsing size
                 const pulse = reducedMotion
                     ? 1
                     : 1 + Math.sin(particle.phase) * 0.35
-
                 const radius = particle.radius * pulse
 
-                // Glowing particle
+                // Draw the particle and its soft halo.
+                // The halo replaces per-particle shadowBlur, which is expensive on canvas.
                 ctx.beginPath()
-
-                ctx.arc(
-                    particle.x,
-                    particle.y,
-                    radius,
-                    0,
-                    Math.PI * 2
-                )
-
-                ctx.fillStyle = `rgba(${particle.color},0.9)`
-                ctx.shadowBlur = 12
-                ctx.shadowColor = `rgba(${particle.color},0.8)`
-
+                ctx.arc(particle.x, particle.y, radius * 2.5, 0, Math.PI * 2)
+                ctx.fillStyle = particle.softColor
                 ctx.fill()
-                ctx.shadowBlur = 0
 
-                // Soft outer glow
                 ctx.beginPath()
-
-                ctx.arc(
-                    particle.x,
-                    particle.y,
-                    radius * 2.5,
-                    0,
-                    Math.PI * 2
-                )
-
-                ctx.fillStyle = `rgba(${particle.color},0.09)`
+                ctx.arc(particle.x, particle.y, radius, 0, Math.PI * 2)
+                ctx.fillStyle = particle.fillColor
                 ctx.fill()
-            })
+            }
 
-            // CONNECT PARTICLES
-            particles.forEach((particle, index) => {
-                particles.slice(index + 1).forEach((other) => {
+            // Connect nearby particles.
+            ctx.lineWidth = 0.7
+
+            for (let i = 0; i < particles.length; i += 1) {
+                const particle = particles[i]
+
+                for (let j = i + 1; j < particles.length; j += 1) {
+                    const other = particles[j]
                     const dx = particle.x - other.x
                     const dy = particle.y - other.y
+                    const distanceSquared = dx * dx + dy * dy
 
-                    const distance = Math.hypot(dx, dy)
-
-                    if (distance < 135) {
+                    if (distanceSquared < connectionDistanceSquared) {
+                        const distance = Math.sqrt(distanceSquared)
                         const opacity =
-                            0.18 * (1 - distance / 135)
+                            0.18 * (1 - distance / connectionDistance)
 
                         ctx.beginPath()
-
                         ctx.moveTo(particle.x, particle.y)
                         ctx.lineTo(other.x, other.y)
-
                         ctx.strokeStyle = isDark
                             ? `rgba(167,139,250,${opacity})`
                             : `rgba(124,58,237,${opacity * 0.8})`
-
-                        ctx.lineWidth = 0.7
-                        ctx.stroke()
-                    }
-                })
-
-                // CONNECT PARTICLES TO CURSOR
-                if (pointer.active && !isTouch && !reducedMotion) {
-                    const dx = particle.x - pointer.x
-                    const dy = particle.y - pointer.y
-
-                    const distance = Math.hypot(dx, dy)
-
-                    if (distance < 165) {
-                        const opacity =
-                            0.28 * (1 - distance / 165)
-
-                        ctx.beginPath()
-
-                        ctx.moveTo(particle.x, particle.y)
-                        ctx.lineTo(pointer.x, pointer.y)
-
-                        ctx.strokeStyle = isDark
-                            ? `rgba(251,146,60,${opacity})`
-                            : `rgba(234,88,12,${opacity})`
-
-                        ctx.lineWidth = 0.9
                         ctx.stroke()
                     }
                 }
-            })
+
+                // Connect nearby particles to the cursor.
+                if (pointer.active && !isTouch && !reducedMotion) {
+                    const dx = particle.x - pointer.x
+                    const dy = particle.y - pointer.y
+                    const distanceSquared = dx * dx + dy * dy
+
+                    if (distanceSquared < cursorDistanceSquared) {
+                        const distance = Math.sqrt(distanceSquared)
+                        const opacity =
+                            0.28 * (1 - distance / cursorDistance)
+
+                        ctx.beginPath()
+                        ctx.moveTo(particle.x, particle.y)
+                        ctx.lineTo(pointer.x, pointer.y)
+                        ctx.strokeStyle = isDark
+                            ? `rgba(251,146,60,${opacity})`
+                            : `rgba(234,88,12,${opacity})`
+                        ctx.lineWidth = 0.9
+                        ctx.stroke()
+                        ctx.lineWidth = 0.7
+                    }
+                }
+            }
 
             if (!reducedMotion) {
                 animationId = requestAnimationFrame(draw)
             }
         }
 
-        // VISIBILITY CONTROL
+        const stopAnimation = () => {
+            if (animationId) {
+                cancelAnimationFrame(animationId)
+                animationId = 0
+            }
+        }
+
         const handleVisibility = () => {
             isVisible = !document.hidden
+            stopAnimation()
 
-            cancelAnimationFrame(animationId)
+            if (isVisible) {
+                draw()
+            }
+        }
 
-            if (isVisible && !reducedMotion) {
-                animationId = requestAnimationFrame(draw)
+        const handleResize = () => {
+            resize()
+            stopAnimation()
+
+            if (isVisible) {
+                draw()
             }
         }
 
@@ -321,67 +319,54 @@ function HeroBackground() {
             draw()
         }
 
-        window.addEventListener('resize', resize)
+        window.addEventListener('resize', handleResize, { passive: true })
+        document.addEventListener('visibilitychange', handleVisibility)
 
-        document.addEventListener(
-            'visibilitychange',
-            handleVisibility
-        )
-
-        if (!isTouch) {
-            window.addEventListener('mousemove', handleMouseMove)
+        if (!isTouch && !reducedMotion) {
+            window.addEventListener('mousemove', handleMouseMove, {
+                passive: true,
+            })
             window.addEventListener('mouseleave', handleMouseLeave)
         }
 
         return () => {
-            cancelAnimationFrame(animationId)
-
-            window.removeEventListener('resize', resize)
-
-            document.removeEventListener(
-                'visibilitychange',
-                handleVisibility
-            )
-
+            stopAnimation()
+            window.removeEventListener('resize', handleResize)
+            document.removeEventListener('visibilitychange', handleVisibility)
             window.removeEventListener('mousemove', handleMouseMove)
             window.removeEventListener('mouseleave', handleMouseLeave)
         }
-    }, [isDark])
+    }, [isDark, shouldReduceMotion])
 
     // 3D CURSOR PARALLAX
     useEffect(() => {
         if (
             shouldReduceMotion ||
             window.matchMedia('(pointer: coarse)').matches
-        ) return
+        ) {
+            mouseX.set(0)
+            mouseY.set(0)
+            return
+        }
 
-        let frame
-
-        const handleMove = (e) => {
-            cancelAnimationFrame(frame)
-
-            frame = requestAnimationFrame(() => {
-                setMouse({
-                    x: (e.clientX / window.innerWidth - 0.5) * 2,
-                    y: (e.clientY / window.innerHeight - 0.5) * 2,
-                })
-            })
+        const handleMove = (event) => {
+            mouseX.set((event.clientX / window.innerWidth - 0.5) * 2)
+            mouseY.set((event.clientY / window.innerHeight - 0.5) * 2)
         }
 
         const handleLeave = () => {
-            setMouse({ x: 0, y: 0 })
+            mouseX.set(0)
+            mouseY.set(0)
         }
 
-        window.addEventListener('mousemove', handleMove)
+        window.addEventListener('mousemove', handleMove, { passive: true })
         window.addEventListener('mouseleave', handleLeave)
 
         return () => {
-            cancelAnimationFrame(frame)
-
             window.removeEventListener('mousemove', handleMove)
             window.removeEventListener('mouseleave', handleLeave)
         }
-    }, [shouldReduceMotion])
+    }, [shouldReduceMotion, mouseX, mouseY])
 
     return (
         <div
@@ -395,21 +380,19 @@ function HeroBackground() {
             />
 
             {/* VIOLET 3D ORB */}
-            <motion.div
+            <m.div
                 className="absolute -right-20 top-10 h-[300px] w-[300px] rounded-full blur-[90px] md:h-[450px] md:w-[450px]"
-                animate={shouldReduceMotion ? {} : {
-                    x: mouse.x * -65,
-                    y: mouse.y * -65,
-                    scale: [1, 1.12, 1],
-                }}
                 style={{
+                    x: violetX,
+                    y: violetY,
                     background: isDark
                         ? 'rgba(124,58,237,0.24)'
                         : 'rgba(124,58,237,0.14)',
                 }}
+                animate={shouldReduceMotion ? {} : {
+                    scale: [1, 1.12, 1],
+                }}
                 transition={{
-                    x: { type: 'spring', stiffness: 45, damping: 18 },
-                    y: { type: 'spring', stiffness: 45, damping: 18 },
                     scale: {
                         duration: 8,
                         repeat: Infinity,
@@ -419,21 +402,19 @@ function HeroBackground() {
             />
 
             {/* ORANGE 3D ORB */}
-            <motion.div
+            <m.div
                 className="absolute -bottom-20 left-[15%] h-[280px] w-[280px] rounded-full blur-[100px] md:h-[400px] md:w-[400px]"
-                animate={shouldReduceMotion ? {} : {
-                    x: mouse.x * 85,
-                    y: mouse.y * 85,
-                    scale: [1, 1.15, 1],
-                }}
                 style={{
+                    x: orangeX,
+                    y: orangeY,
                     background: isDark
                         ? 'rgba(251,146,60,0.20)'
                         : 'rgba(234,88,12,0.13)',
                 }}
+                animate={shouldReduceMotion ? {} : {
+                    scale: [1, 1.15, 1],
+                }}
                 transition={{
-                    x: { type: 'spring', stiffness: 35, damping: 16 },
-                    y: { type: 'spring', stiffness: 35, damping: 16 },
                     scale: {
                         duration: 10,
                         repeat: Infinity,
@@ -443,26 +424,26 @@ function HeroBackground() {
             />
 
             {/* PERSPECTIVE GRID */}
-            <motion.div
+            <m.div
                 className="absolute inset-x-0 bottom-0 h-[45%]"
-                animate={shouldReduceMotion ? {} : {
-                    x: mouse.x * -18,
-                    y: mouse.y * -18,
-                    rotateX: 55,
-                }}
                 style={{
+                    x: gridX,
+                    y: gridY,
+                    rotateX: 55,
                     backgroundImage: `
                         linear-gradient(
-                            ${isDark
-                                ? 'rgba(167,139,250,0.10)'
-                                : 'rgba(124,58,237,0.07)'
+                            ${
+                                isDark
+                                    ? 'rgba(167,139,250,0.10)'
+                                    : 'rgba(124,58,237,0.07)'
                             } 1px, transparent 1px
                         ),
                         linear-gradient(
                             90deg,
-                            ${isDark
-                                ? 'rgba(167,139,250,0.10)'
-                                : 'rgba(124,58,237,0.07)'
+                            ${
+                                isDark
+                                    ? 'rgba(167,139,250,0.10)'
+                                    : 'rgba(124,58,237,0.07)'
                             } 1px, transparent 1px
                         )
                     `,

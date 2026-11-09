@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import {
     ArrowUpRight,
     Mail,
@@ -197,7 +197,7 @@ function Footer() {
                         {' '}Designed & built with care.
                     </p>
 
-                    <motion.button
+                    <m.button
                         type="button"
                         onClick={() => handleNavigation('#home')}
                         whileHover={shouldReduceMotion ? {} : { y: -3 }}
@@ -213,7 +213,7 @@ function Footer() {
                             size={13}
                             className="transition-transform duration-300 group-hover:-translate-y-0.5"
                         />
-                    </motion.button>
+                    </m.button>
                 </div>
             </div>
         </footer>

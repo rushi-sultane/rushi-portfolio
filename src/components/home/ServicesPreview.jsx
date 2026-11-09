@@ -1,5 +1,5 @@
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
     Code2,
     Database,
@@ -66,7 +66,7 @@ function ServicesPreview() {
             <div className="services-container relative mx-auto w-full max-w-7xl">
 
                 {/* Heading */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 25 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -88,7 +88,7 @@ function ServicesPreview() {
                     <p className="hidden max-w-xs pb-2 text-sm leading-6 text-white/40 md:block">
                         Turning ideas into functional, engaging and meaningful digital experiences.
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Creative service cards */}
                 <div className="services-grid grid grid-cols-2 gap-4">
@@ -97,7 +97,7 @@ function ServicesPreview() {
                         const Icon = service.icon
 
                         return (
-                            <motion.article
+                            <m.article
                                 key={service.number}
                                 initial={{ opacity: 0, y: 35 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -163,7 +163,7 @@ function ServicesPreview() {
                                 <div className="pointer-events-none absolute bottom-6 right-6 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/35 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:border-violet-400/40 group-hover:text-violet-300">
                                     <ArrowUpRight size={17} />
                                 </div>
-                            </motion.article>
+                            </m.article>
                         )
                     })}
 

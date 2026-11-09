@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useTheme } from '../../context/ThemeContext'
 
 function Preloader() {
@@ -35,7 +35,7 @@ function Preloader() {
     return (
         <AnimatePresence>
             {!complete && (
-                <motion.div
+                <m.div
                     className="fixed inset-0 z-[1000] flex flex-col justify-between p-8 md:p-14"
                     style={{
                         backgroundColor: isDark ? '#100d18' : '#fff8f2',
@@ -92,7 +92,7 @@ function Preloader() {
                             Crafting digital experiences
                         </p>
                     </div>
-                </motion.div>
+                </m.div>
             )}
         </AnimatePresence>
     )

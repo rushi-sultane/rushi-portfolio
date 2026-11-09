@@ -1,5 +1,4 @@
-/* Fonts must be imported before Tailwind */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* Fonts are imported in main.jsx before this stylesheet. */
 @import "tailwindcss";
 
 /* THEME TOKENS */
@@ -43,16 +42,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
-  min-height: 100%;
   width: 100%;
+  min-height: 100%;
   overflow-x: clip;
   scroll-behavior: smooth;
-  scroll-snap-type: none;
   background: var(--page-bg);
 }
 
@@ -216,6 +216,15 @@ footer {
     max-width: 290px;
     margin-top: 20px;
   }
+
+  .marquee-item {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+
+  .marquee-track {
+    animation-duration: 28s;
+  }
 }
 
 @media (max-width: 380px) {
@@ -228,21 +237,7 @@ footer {
   }
 }
 
-/* ACCESSIBILITY: REDUCED MOTION */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ========================================
-   INFINITE TECH SKILLS MARQUEE
-======================================== */
+/* INFINITE TECH SKILLS MARQUEE */
 .tech-marquee {
   position: relative;
   width: 100%;
@@ -268,7 +263,6 @@ footer {
   display: flex;
   width: max-content;
   animation: tech-marquee-scroll 35s linear infinite;
-  will-change: transform;
 }
 
 .marquee-group {
@@ -290,7 +284,10 @@ footer {
   color: var(--secondary-text);
   background: var(--card-bg);
   font-size: 13px;
-  transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .marquee-item:hover {
@@ -318,29 +315,8 @@ footer {
   }
 }
 
-/* Pause on hover */
 .tech-marquee:hover .marquee-track {
   animation-play-state: paused;
-}
-
-/* Mobile */
-@media (max-width: 767px) {
-  .marquee-item {
-    padding: 10px 16px;
-    font-size: 12px;
-  }
-
-  .marquee-track {
-    animation-duration: 28s;
-  }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    animation: none;
-    will-change: auto;
-  }
 }
 
 /* THEME TOGGLE */
@@ -351,10 +327,29 @@ footer {
   background: var(--card-bg);
   color: var(--primary-text);
   font-size: 13px;
-  transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .theme-toggle:hover {
   border-color: var(--accent-violet);
   color: var(--accent-violet);
+}
+
+/* ACCESSIBILITY: REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
 }

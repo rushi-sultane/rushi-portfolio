@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { m, useMotionValue, useSpring } from 'framer-motion'
 
 function CustomCursor() {
     const [hovering, setHovering] = useState(false)
@@ -49,14 +49,14 @@ function CustomCursor() {
     }, [x, y, visible])
 
     return (
-        <motion.div
+        <m.div
             aria-hidden="true"
             className="pointer-events-none fixed left-0 top-0 z-[999] hidden md:block"
             style={{ x: springX, y: springY, opacity: visible ? 1 : 0 }}
             transition={{ opacity: { duration: 0.2 } }}
         >
             {/* Outer Ring */}
-            <motion.div
+            <m.div
                 className="absolute -left-[9px] -top-[9px] rounded-full border"
                 animate={{
                     width: hovering ? 26 : 18,
@@ -68,7 +68,7 @@ function CustomCursor() {
             />
 
             {/* Center Dot */}
-            <motion.div
+            <m.div
                 className="absolute -left-[2px] -top-[2px] h-1 w-1 rounded-full"
                 animate={{
                     scale: hovering ? 0.7 : 1,
@@ -76,7 +76,7 @@ function CustomCursor() {
                 }}
                 transition={{ duration: 0.2 }}
             />
-        </motion.div>
+        </m.div>
     )
 }
 

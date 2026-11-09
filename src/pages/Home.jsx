@@ -1,16 +1,18 @@
-
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 
 import Preloader from '../components/common/Preloader'
 import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
 import Hero from '../components/home/Hero'
-import CustomCursor from '../components/common/CustomCursor'
 
+const CustomCursor = lazy(() => import('../components/common/CustomCursor'))
+
+const Footer = lazy(() => import('../components/layout/Footer'))
 const AboutPreview = lazy(() => import('../components/home/AboutPreview'))
 const TechStack = lazy(() => import('../components/home/TechStack'))
 const FeaturedProjects = lazy(() => import('../components/home/FeaturedProjects'))
 const ContactCTA = lazy(() => import('../components/home/ContactCTA'))
+
+const SECTION_ROOT_MARGIN = '400px 0px'
 
 function DeferredSection({ children, minHeight = '400px' }) {
     const sectionRef = useRef(null)
@@ -20,6 +22,12 @@ function DeferredSection({ children, minHeight = '400px' }) {
         const element = sectionRef.current
         if (!element) return
 
+        // Load immediately in browsers without IntersectionObserver support.
+        if (!('IntersectionObserver' in window)) {
+            setShouldLoad(true)
+            return
+        }
+
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
@@ -27,7 +35,11 @@ function DeferredSection({ children, minHeight = '400px' }) {
                     observer.disconnect()
                 }
             },
-            { rootMargin: '400px 0px' }
+            {
+                root: null,
+                rootMargin: SECTION_ROOT_MARGIN,
+                threshold: 0,
+            }
         )
 
         observer.observe(element)
@@ -38,7 +50,7 @@ function DeferredSection({ children, minHeight = '400px' }) {
     return (
         <div ref={sectionRef} style={{ minHeight }}>
             {shouldLoad && (
-                <Suspense fallback={<div aria-hidden="true" />}>
+                <Suspense fallback={null}>
                     {children}
                 </Suspense>
             )}
@@ -47,6 +59,25 @@ function DeferredSection({ children, minHeight = '400px' }) {
 }
 
 function Home() {
+    const [enableCursor, setEnableCursor] = useState(false)
+
+    // Load the custom cursor only when the active device has a precise pointer.
+    useEffect(() => {
+        const pointerQuery = window.matchMedia('(pointer: fine)')
+
+        const updateCursor = () => {
+            setEnableCursor(pointerQuery.matches)
+        }
+
+        updateCursor()
+
+        pointerQuery.addEventListener('change', updateCursor)
+
+        return () => {
+            pointerQuery.removeEventListener('change', updateCursor)
+        }
+    }, [])
+
     return (
         <>
             <Preloader />
@@ -72,8 +103,15 @@ function Home() {
                 </DeferredSection>
             </main>
 
-            <Footer />
-            <CustomCursor/>
+            <DeferredSection minHeight="350px">
+                <Footer />
+            </DeferredSection>
+
+            {enableCursor && (
+                <Suspense fallback={null}>
+                    <CustomCursor />
+                </Suspense>
+            )}
         </>
     )
 }
